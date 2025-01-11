@@ -2,6 +2,8 @@
 
 Um servidor MCP que implementa um sistema de checklist para gerenciamento de tarefas no Claude Desktop. O sistema permite criar e gerenciar múltiplas listas de tarefas, com suporte a prioridades, datas de vencimento e tags.
 
+<a href="https://glama.ai/mcp/servers/z3gwefnnwr"><img width="380" height="200" src="https://glama.ai/mcp/servers/z3gwefnnwr/badge" alt="TODO Checklist Server MCP server" /></a>
+
 ## Funcionalidades
 
 - ✅ Criação e gerenciamento de múltiplas listas de tarefas
