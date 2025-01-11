@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "todo-checklist": {
+      "type": "command",
+      "command": "node dist/index.js",
+      "cwd": "C:\\workspace\\mcp\\mcp-mr-checklist"
+    }
+  }
+}

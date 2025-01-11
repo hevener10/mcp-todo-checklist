@@ -1,0 +1,31 @@
+# Arquivos e diretórios do sistema
+.DS_Store
+Thumbs.db
+
+# Dependências
+node_modules/
+package-lock.json
+
+# Arquivos de build
+dist/
+build/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Dados de runtime
+data/
+tmp/
+
+# Cache
+.cache/

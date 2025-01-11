@@ -1,0 +1,17 @@
+{
+  "name": "todo-checklist",
+  "displayName": "TODO Checklist",
+  "description": "Plugin para gerenciar listas de tarefas e TODOs",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "config": {
+    "storagePath": "./data",
+    "defaultCategories": [
+      "Pessoal",
+      "Trabalho",
+      "Estudos",
+      "Projetos",
+      "Outros"
+    ]
+  }
+}
