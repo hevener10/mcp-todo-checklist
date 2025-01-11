@@ -3,6 +3,13 @@ declare module '@modelcontextprotocol/sdk' {
     body: any;
     params: Record<string, string>;
     query: Record<string, string>;
+    args?: any[];
+  }
+
+  export interface Response {
+    success: boolean;
+    data?: any;
+    error?: string;
   }
 
   export interface ServerConfig {
@@ -14,11 +21,7 @@ declare module '@modelcontextprotocol/sdk' {
   export class MCPServer {
     constructor(config: ServerConfig);
     
-    post(path: string, handler: (req: Request) => Promise<any>): void;
-    get(path: string, handler: (req: Request) => Promise<any>): void;
-    put(path: string, handler: (req: Request) => Promise<any>): void;
-    delete(path: string, handler: (req: Request) => Promise<any>): void;
-    
+    registerHandler(path: string, handler: (req: Request) => Promise<Response>): void;
     start(): Promise<void>;
   }
 }
