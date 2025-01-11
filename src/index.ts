@@ -13,6 +13,18 @@ import { ChecklistService } from './service/ChecklistService.js';
 import { FileStorage } from './storage/index.js';
 import { z } from 'zod';
 
+// Adicione logging para debugging em stdin
+process.stdin.on('data', (data) => {
+    console.error('DEBUG - Received data:', data.toString());
+    try {
+        const parsed = JSON.parse(data.toString());
+        console.error('DEBUG - Parsed JSON:', JSON.stringify(parsed, null, 2));
+    } catch (error) {
+        console.error('DEBUG - Error parsing JSON:', error);
+        console.error('DEBUG - Raw data:', data.toString());
+    }
+});
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const storage = new FileStorage(path.join(__dirname, '../data'));
 const checklistService = new ChecklistService(storage);
@@ -40,7 +52,23 @@ const completeSchema = z.object({
   taskTitle: z.string()
 });
 
-// Configuração do servidor
+// Interface para mensagens MCP
+interface MCPMessage {
+    type: string;
+    payload: any;
+}
+
+// Função de validação de mensagens
+function isValidMessage(data: any): data is MCPMessage {
+    return (
+        typeof data === 'object' &&
+        data !== null &&
+        typeof data.type === 'string' &&
+        'payload' in data
+    );
+}
+
+// Configuração do servidor com logging adicional
 const server = new Server({
   name: 'Todo Checklist Server',
   version: '1.0.0',
@@ -50,8 +78,22 @@ const server = new Server({
   },
 });
 
+// Adicione handler de erro global
+process.on('uncaughtException', (error) => {
+    console.error('DEBUG - Uncaught exception:', error);
+    const errorMessage = {
+        type: 'error',
+        payload: {
+            message: error.message,
+            stack: error.stack
+        }
+    };
+    process.stdout.write(JSON.stringify(errorMessage) + '\n');
+});
+
 // Definição das ferramentas disponíveis
 server.setRequestHandler(ListToolsRequestSchema, async () => {
+  console.error('DEBUG - ListTools request received');
   return {
     tools: [
       {
@@ -116,17 +158,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   };
 });
 
-// Handler para execução dos comandos
+// Handler para execução dos comandos com logging adicional
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  console.error('DEBUG - CallTool request received:', JSON.stringify(request, null, 2));
   const { name, arguments: args } = request.params;
 
   if (!args || typeof args !== 'object') {
+    console.error('DEBUG - Invalid arguments:', args);
     throw new Error(`Argumentos não fornecidos ou inválidos para o comando: ${name}`);
   }
 
   try {
     switch (name) {
       case "todo_create": {
+        console.error('DEBUG - Processing todo_create');
         const params = createSchema.parse(args);
         const newList = await checklistService.createChecklist({
           title: params.title,
@@ -138,6 +183,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "todo_add": {
+        console.error('DEBUG - Processing todo_add');
         const params = addSchema.parse(args);
         const lists = await checklistService.getUserChecklists('current-user');
         const list = lists.find(l => l.title === params.listTitle);
@@ -157,6 +203,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "todo_list": {
+        console.error('DEBUG - Processing todo_list');
         const allLists = await checklistService.getUserChecklists('current-user');
         const listSummary = allLists.map(l => ({
           title: l.title,
@@ -168,6 +215,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "todo_show": {
+        console.error('DEBUG - Processing todo_show');
         const params = showSchema.parse(args);
         const userLists = await checklistService.getUserChecklists('current-user');
         const targetList = userLists.find(l => l.title === params.listTitle);
@@ -180,6 +228,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "todo_complete": {
+        console.error('DEBUG - Processing todo_complete');
         const params = completeSchema.parse(args);
         const todoLists = await checklistService.getUserChecklists('current-user');
         const todoList = todoLists.find(l => l.title === params.listTitle);
@@ -198,10 +247,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       default:
+        console.error('DEBUG - Unknown command:', name);
         throw new Error(`Comando desconhecido: ${name}`);
     }
   } catch (error) {
-    console.error('Erro:', error);
+    console.error('DEBUG - Error processing command:', error);
     return {
       content: [
         {
@@ -213,14 +263,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   }
 });
 
-// Inicialização do servidor
+// Inicialização do servidor com logging adicional
 async function main() {
   try {
+    console.error('DEBUG - Initializing server...');
     const transport = new StdioServerTransport();
     await server.connect(transport);
     console.error("Todo Checklist Server executando em stdio");
   } catch (error) {
-    console.error("Erro ao iniciar o servidor:", error);
+    console.error("DEBUG - Error initializing server:", error);
     process.exit(1);
   }
 }

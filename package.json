@@ -1,5 +1,5 @@
 {
-  "name": "@modelcontextprotocol/server-todo-checklist",
+  "name": "@hevener/server-todo-checklist",
   "version": "1.0.0",
   "description": "MCP server para gerenciamento de listas de tarefas e TODOs",
   "type": "module",
@@ -19,13 +19,14 @@
     "prepare": "npm run build"
   },
   "dependencies": {
+    "@hevener/server-todo-checklist": "file:",
     "@modelcontextprotocol/sdk": "1.0.1",
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.23.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

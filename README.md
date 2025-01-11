@@ -1,6 +1,20 @@
 # MCP TODO Checklist
 
-Um servidor MCP que implementa um sistema de checklist para gerenciamento de tarefas no Claude Desktop.
+Um servidor MCP que implementa um sistema de checklist para gerenciamento de tarefas no Claude Desktop. O sistema permite criar e gerenciar múltiplas listas de tarefas, com suporte a prioridades, datas de vencimento e tags.
+
+## Funcionalidades
+
+- ✅ Criação e gerenciamento de múltiplas listas de tarefas
+- 📌 Suporte a prioridades (baixa, média, alta)
+- 📅 Datas de vencimento para tarefas
+- 🏷️ Sistema de tags para organização
+- 👥 Compartilhamento de listas entre usuários
+- 💾 Armazenamento persistente em sistema de arquivos
+
+## Requisitos
+
+- Node.js 18 ou superior
+- NPM 8 ou superior
 
 ## Instalação
 
@@ -40,7 +54,7 @@ npm run build
 
 1. Instale o pacote globalmente
 ```bash
-npm install -g @modelcontextprotocol/server-todo-checklist
+npm install -g @hevener/server-todo-checklist
 ```
 
 2. Configure no `claude_desktop_config.json`:
@@ -61,7 +75,7 @@ npm install -g @modelcontextprotocol/server-todo-checklist
 
 ## Comandos Disponíveis no Claude
 
-### Criar uma nova lista:
+### Criar uma nova lista
 ```
 /todo_create {
   "title": "Minha Lista",
@@ -69,7 +83,7 @@ npm install -g @modelcontextprotocol/server-todo-checklist
 }
 ```
 
-### Adicionar uma tarefa:
+### Adicionar uma tarefa
 ```
 /todo_add {
   "listTitle": "Minha Lista",
@@ -80,24 +94,39 @@ npm install -g @modelcontextprotocol/server-todo-checklist
 }
 ```
 
-### Listar todas as listas:
+### Listar todas as listas
 ```
 /todo_list
 ```
 
-### Ver detalhes de uma lista:
+### Ver detalhes de uma lista
 ```
 /todo_show {
   "listTitle": "Minha Lista"
 }
 ```
 
-### Marcar tarefa como concluída:
+### Marcar tarefa como concluída
 ```
 /todo_complete {
   "listTitle": "Minha Lista",
   "taskTitle": "Nova Tarefa"
 }
+```
+
+## Estrutura do Projeto
+
+```
+src/
+├── index.ts           # Ponto de entrada do servidor
+├── commands.ts        # Definição dos comandos disponíveis
+├── service/          
+│   └── ChecklistService.ts  # Lógica de negócio
+├── storage/
+│   └── index.ts      # Implementação do armazenamento
+└── types/
+    ├── ChecklistItem.ts     # Tipos para itens
+    └── index.ts            # Tipos principais
 ```
 
 ## Estrutura de Dados
@@ -131,6 +160,22 @@ interface ChecklistItem {
 }
 ```
 
+## Scripts de Desenvolvimento
+
+```bash
+# Compilar o projeto
+npm run build
+
+# Executar em modo desenvolvimento
+npm run dev
+
+# Observar alterações e recompilar
+npm run watch
+
+# Iniciar o servidor compilado
+npm start
+```
+
 ## Configurações
 
 No arquivo `claude_desktop_config.json`, você pode configurar:
@@ -138,17 +183,12 @@ No arquivo `claude_desktop_config.json`, você pode configurar:
 - `storagePath`: Diretório onde os dados serão armazenados
 - `commandTimeout`: Tempo máximo de execução dos comandos em milissegundos (padrão: 60000)
 
-## Desenvolvimento
+## Tecnologias Utilizadas
 
-Para desenvolvimento, você pode usar:
-
-```bash
-# Executar em modo desenvolvimento
-npm run dev
-
-# Observar alterações e recompilar
-npm run watch
-```
+- TypeScript
+- Model Context Protocol SDK
+- Zod (validação de dados)
+- Sistema de armazenamento baseado em arquivos
 
 ## Licença
 
